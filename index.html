@@ -6,24 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unbreakable Friends</title>
     <!-- Google Fonts for modern typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome for Discord icon and other icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
+    <link rel="icon" type="image/x-icon" href="1i.png">
     <style>
         /* General Body & Root Styles */
         :root {
-            --dark-bg: #1A1A1A;
-            --dark-card: #282828;
+            --dark-bg: #0F0F0F; /* Even darker background for more contrast */
+            --dark-card: #1A1A1A;
             --text-light: #E0E0E0;
             --text-dark: #A0A0A0;
+            --text-muted: #666666; /* For subtle text */
 
-            /* Main Gradient for Titles and Buttons */
-            --gradient-start: #007bff; /* Electric Blue */
-            --gradient-end: #8a2be2;   /* Bright Purple */
-            --accent-green: #00f080;
+            /* Main Gradient for Titles and Buttons - More vibrant */
+            --gradient-start: #6A11CB; /* Deep Purple */
+            --gradient-middle: #2575FC; /* Electric Blue */
+            --gradient-end: #00F080;   /* Bright Green */
 
-            /* Specific accent colors for member cards and icons */
+            /* Specific accent colors for member cards and icons - more refined */
             --card-gradient-blue-start: #007bff;
             --card-gradient-blue-end: #00c7ff;
             --card-gradient-orange-start: #ff8c00;
@@ -34,22 +35,65 @@
             --card-gradient-teal-end: #00ffff;
             --card-gradient-purple-start: #8a2be2;
             --card-gradient-purple-end: #da70d6;
-            --card-gradient-orange-alt-start: #ff4500; /* Darker orange */
-            --card-gradient-orange-alt-end: #ff8c00;
+            --card-gradient-orange-alt-start: #FF416C; /* Punchy Orange-Red */
+            --card-gradient-orange-alt-end: #FF4B2B;   /* Brighter Orange-Red */
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
             margin: 0;
-            font-family: 'Open Sans', sans-serif;
+            font-family: 'Poppins', sans-serif; /* Modern, clean font */
             color: var(--text-light);
             background-color: var(--dark-bg);
             line-height: 1.6;
             overflow-x: hidden; /* Prevent horizontal scroll */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="4" fill="rgba(0,180,255,0.7)"/></svg>') 8 8, auto; /* Custom default cursor */
+        }
+
+        /* Cursor trail dot */
+        .cursor-dot {
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(45deg, var(--gradient-end), var(--gradient-middle));
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.1s ease-out, transform 0.1s ease-out, background 0.2s ease-out;
+            z-index: 9999;
+            box-shadow: 0 0 10px rgba(0,240,128,0.5); /* Glowing effect */
+            animation: pulseCursor 1.5s infinite alternate;
+        }
+
+        @keyframes pulseCursor {
+            from { box-shadow: 0 0 10px rgba(0,240,128,0.5), 0 0 20px rgba(0,240,128,0.3); }
+            to { box-shadow: 0 0 15px rgba(0,240,128,0.8), 0 0 25px rgba(0,240,128,0.5); }
+        }
+
+        a:hover .cursor-dot, button:hover .cursor-dot, .clickable:hover .cursor-dot {
+            transform: translate(-50%, -50%) scale(1.5);
+            opacity: 1;
+            background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+            box-shadow: 0 0 15px rgba(106,17,203,0.7), 0 0 25px rgba(106,17,203,0.5);
+        }
+
+        /* Utility classes */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 5%;
+            width: 100%;
         }
 
         section {
-            padding: 100px 5%; /* Default padding for all sections */
-            min-height: 100vh; /* Ensure sections take full viewport height */
+            padding: 120px 0; /* More vertical breathing room */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -57,51 +101,106 @@
             box-sizing: border-box;
             position: relative;
             z-index: 1;
+            opacity: 0; /* For scroll animation */
+            transform: translateY(30px); /* For scroll animation */
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
         }
 
+        section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Background Particle/Gradient Overlay for Sections */
+        section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at top left, rgba(37, 117, 252, 0.05), transparent 50%),
+                              radial-gradient(circle at bottom right, rgba(106, 17, 203, 0.05), transparent 50%);
+            z-index: -1; /* Behind content */
+            pointer-events: none; /* Make sure it doesn't interfere with clicks */
+            animation: backgroundPan 30s linear infinite alternate;
+            background-size: 200% 200%;
+        }
+
+        @keyframes backgroundPan {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+        
         /* Navbar Styles */
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 5%;
-            background-color: var(--dark-bg);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px 5%; /* Increased padding */
+            background-color: transparent; /* Initially transparent */
             position: fixed;
-            width: 90%;
+            width: 100%;
             top: 0;
             z-index: 1000;
+            transition: background-color 0.4s ease, backdrop-filter 0.4s ease;
+        }
+
+        .navbar.scrolled {
+            background-color: rgba(15, 15, 15, 0.85); /* Darker, slightly transparent when scrolled */
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         }
 
         .nav-brand {
             display: flex;
             align-items: center;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            text-decoration: none;
+            position: relative;
+            z-index: 10;
         }
 
         .navbar-logo {
-            width: 40px; /* Size for navbar logo */
+            width: 45px; /* Slightly larger logo */
             height: auto;
             margin-right: 15px;
+            filter: drop-shadow(0 0 8px rgba(0, 240, 128, 0.3));
+            animation: bounceLogo 5s infinite ease-in-out;
+        }
+
+        @keyframes bounceLogo {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
         }
 
         .nav-links {
             display: flex;
-            gap: 30px;
+            gap: 35px; /* More space between links */
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
         }
 
         .nav-item {
             color: var(--text-dark);
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 1rem;
             position: relative;
-            padding-bottom: 5px;
-            transition: color 0.3s ease;
+            padding-bottom: 8px; /* For the underline effect */
+            transition: color 0.3s ease, transform 0.2s ease;
         }
 
         .nav-item:hover,
         .nav-item.active {
             color: var(--text-light);
+            transform: translateY(-2px);
+            text-shadow: 0 0 8px rgba(255,255,255,0.3);
         }
 
         .nav-item.active::after,
@@ -111,185 +210,459 @@
             left: 0;
             bottom: 0;
             width: 100%;
-            height: 2px;
-            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
-            border-radius: 2px;
+            height: 3px; /* Thicker underline */
+            background: linear-gradient(to right, var(--gradient-middle), var(--gradient-end)); /* Vibrant gradient underline */
+            border-radius: 3px;
+            opacity: 1;
+            transition: width 0.3s ease, opacity 0.3s ease;
+        }
+        
+        .nav-item:not(.active):hover::after {
+            width: 80%; /* Shorter hover underline */
+            left: 10%; /* Center it */
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-middle));
         }
 
         .nav-utility {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 25px;
+            z-index: 10;
         }
 
         .discord-icon-container,
         .search-icon-container {
             color: var(--text-dark);
-            font-size: 1.2rem;
+            font-size: 1.3rem; /* Slightly larger icons */
             cursor: pointer;
-            transition: color 0.3s ease;
+            transition: color 0.3s ease, transform 0.2s ease;
         }
 
         .discord-icon-container:hover,
         .search-icon-container:hover {
             color: var(--text-light);
+            transform: scale(1.1);
         }
 
         .discord-icon-container {
-            padding: 5px 10px;
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 5px;
+            padding: 8px 15px; /* Larger clickable area */
+            background-color: rgba(255, 255, 255, 0.08); /* More prominent background */
+            border-radius: 8px; /* Slightly rounded */
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .discord-icon-container:hover {
+            background-color: rgba(114, 137, 218, 0.2);
+            border-color: rgba(114, 137, 218, 0.5);
+            color: #7289DA;
+            box-shadow: 0 0 15px rgba(114, 137, 218, 0.5);
         }
 
         .search-icon-container {
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            width: 30px;
-            height: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.15); /* More defined border */
+            border-radius: 8px;
+            width: 35px; /* Larger square */
+            height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
+            background-color: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+
+        }
+        .search-icon-container:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: var(--gradient-end);
+            color: var(--gradient-end);
+            box-shadow: 0 0 10px rgba(0,240,128,0.3);
         }
 
         /* Hero Section Specific Styles */
         #hero-section {
-            padding-top: 100px; /* Adjust for sticky navbar */
+            padding-top: 150px; /* Adjust for sticky navbar and hero content */
             text-align: center;
+            position: relative;
+            overflow: hidden; /* Hide particles outside */
+            min-height: calc(100vh - 80px); /* Adjust for navbar height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        #hero-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+
+        /* Hero Background Particles/Shapes */
+        #hero-section::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: -5%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(106, 17, 203, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: floatShape 15s infinite ease-in-out;
+            z-index: 0;
+            filter: blur(50px);
+        }
+
+        #hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: 10%;
+            right: -5%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(37, 117, 252, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: floatShape 18s infinite reverse ease-in-out;
+            z-index: 0;
+            filter: blur(60px);
+        }
+
+        @keyframes floatShape {
+            0% { transform: translate(0, 0) scale(1); opacity: 0.7; }
+            33% { transform: translate(20px, 30px) scale(1.05); opacity: 0.8; }
+            66% { transform: translate(-10px, 20px) scale(0.95); opacity: 0.75; }
+            100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
         }
 
         .hero-content {
-            max-width: 800px;
+            max-width: 900px;
             z-index: 1;
+            position: relative; /* Ensure content is above pseudo-elements */
+            margin-top: 50px;
         }
+
+        /* Glow behind hero title */
+        .main-title-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0, 240, 128, 0.15) 0%, transparent 70%);
+            filter: blur(40px);
+            z-index: 0;
+            animation: pulseGlow 4s infinite alternate ease-in-out;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        #hero-section.is-visible .main-title-glow {
+            opacity: 1;
+        }
+        @keyframes pulseGlow {
+            0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.6; }
+            100% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.9; }
+        }
+
 
         .logo-container {
             margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInTop 1s forwards cubic-bezier(0.2, 0.8, 0.2, 1);
+            animation-delay: 0.4s;
+            position: relative;
+            z-index: 1;
         }
 
         .hero-logo {
-            width: 180px;
+            width: 200px; /* Larger hero logo */
             height: auto;
             display: block;
             margin: 0 auto;
+            filter: drop-shadow(0 0 20px rgba(0, 240, 128, 0.5));
+            animation: rotateIn 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            animation-delay: 0.5s;
+            opacity: 0;
         }
+
+        @keyframes rotateIn {
+            from { transform: rotateY(90deg) scale(0.8); opacity: 0; }
+            to { transform: rotateY(0deg) scale(1); opacity: 1; }
+        }
+
 
         .main-title {
             font-family: 'Montserrat', sans-serif;
-            font-size: 3.8rem;
-            font-weight: 700;
+            font-size: 4.5rem; /* Bigger, bolder title */
+            font-weight: 800; /* Even bolder */
             color: var(--text-light);
-            margin: 0 0 15px;
-            letter-spacing: 2px;
-            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end), var(--accent-green));
+            margin: 0 0 20px;
+            letter-spacing: 3px; /* More prominent letter spacing */
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: inline-block;
+            line-height: 1.1;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInTop 1s forwards cubic-bezier(0.2, 0.8, 0.2, 1);
+            animation-delay: 0.6s;
+            position: relative;
+            z-index: 1;
         }
 
         .tagline {
-            font-family: 'Open Sans', sans-serif;
-            font-size: 1.2rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.4rem; /* More prominent tagline */
             color: var(--text-dark);
-            margin-bottom: 40px;
+            margin-bottom: 50px;
             font-weight: 400;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInTop 1s forwards cubic-bezier(0.2, 0.8, 0.2, 1);
+            animation-delay: 0.8s;
+            position: relative;
+            z-index: 1;
         }
 
         /* Reusable Discord Button Style */
         .btn-discord {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 15px 30px;
-            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            gap: 12px; /* More spacing for icon */
+            padding: 18px 40px; /* Larger button */
+            background: linear-gradient(45deg, var(--gradient-start) 0%, var(--gradient-middle) 100%);
             color: var(--text-light);
             text-decoration: none;
             border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-size: 1.2rem;
+            font-weight: 700;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
             border: none;
             cursor: pointer;
-            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInTop 1s forwards cubic-bezier(0.2, 0.8, 0.2, 1);
+            animation-delay: 1s;
+            z-index: 1;
+        }
+
+        .btn-discord::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-discord:hover::before {
+            left: 100%;
         }
 
         .btn-discord:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(0, 123, 255, 0.5);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 30px var(--gradient-middle);
+            background: linear-gradient(45deg, var(--gradient-middle) 0%, var(--gradient-end) 100%);
         }
 
         .btn-discord .fab {
-            font-size: 1.3rem;
+            font-size: 1.5rem; /* Larger icon */
         }
+
+        @keyframes fadeInTop {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* General Section Title Animation */
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3.5rem; /* Consistent size for section titles */
+            font-weight: 800;
+            color: var(--text-light);
+            margin-bottom: 70px;
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            letter-spacing: 1.5px;
+            position: relative;
+            z-index: 1;
+            padding: 0 10px;
+            transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .section-title.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -15px;
+            transform: translateX(-50%) scaleX(0);
+            width: 80%;
+            height: 5px;
+            background: linear-gradient(to right, var(--gradient-middle), var(--gradient-end));
+            border-radius: 5px;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: -1;
+        }
+
+        .section-title.is-visible::before {
+            transform: translateX(-50%) scaleX(1);
+        }
+
 
         /* About Section Specific Styles */
         #about-section {
-            background-color: var(--dark-bg); /* Ensure consistent background */
+            background-color: var(--dark-bg);
         }
 
         .about-card {
             display: flex;
             background-color: var(--dark-card);
-            border-radius: 15px;
-            padding: 50px;
+            border-radius: 20px; /* More rounded corners */
+            padding: 60px; /* More padding */
             max-width: 1200px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            gap: 50px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            gap: 60px; /* More space between content and visuals */
             align-items: center;
             flex-wrap: wrap;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+        .about-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(37, 117, 252, 0.3);
+        }
+
+
+        .about-card::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            background: linear-gradient(45deg, rgba(106, 17, 203, 0.1), rgba(37, 117, 252, 0.1));
+            filter: blur(30px);
+            z-index: 0;
+            opacity: 0.6;
+            transition: opacity 0.5s ease;
+            animation: subtleGradientMovement 15s infinite alternate ease-in-out;
+        }
+
+        @keyframes subtleGradientMovement {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        .about-card:hover::before {
+            opacity: 0.8;
         }
 
         .about-content {
             flex: 1;
-            min-width: 350px;
+            min-width: 400px;
+            position: relative;
+            z-index: 1;
         }
 
         .about-title {
             font-family: 'Montserrat', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 700;
+            font-size: 3rem; /* Bigger title */
+            font-weight: 800;
             line-height: 1.2;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             color: var(--text-light);
-            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: inline-block;
+            letter-spacing: 1px;
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+             opacity: 0;
+            transform: translateY(20px);
         }
+         .about-card.is-visible .about-title {
+            opacity: 1;
+            transform: translateY(0);
+         }
+
 
         .about-text {
             font-family: 'Open Sans', sans-serif;
-            font-size: 1.05rem;
+            font-size: 1.1rem; /* Slightly larger text */
             color: var(--text-dark);
-            margin-bottom: 30px;
-            line-height: 1.8;
+            margin-bottom: 35px;
+            line-height: 1.9;
+            max-width: 600px;
+            transition: opacity 0.8s ease-out 0.2s, transform 0.8s ease-out 0.2s;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .about-card.is-visible .about-text {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .about-text strong {
             color: var(--text-light);
-            font-weight: 600;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--gradient-middle), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .about-icon-signature {
-            margin-top: 20px;
+            margin-top: 25px;
+            transition: opacity 0.8s ease-out 0.4s, transform 0.8s ease-out 0.4s;
+            opacity: 0;
+            transform: translateY(20px);
         }
+        .about-card.is-visible .about-icon-signature {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
 
         .signature-icon {
-            width: 60px;
+            width: 70px; /* Larger signature icon */
             height: auto;
-            opacity: 0.6;
+            opacity: 0.7;
+            filter: drop-shadow(0 0 10px rgba(0, 240, 128, 0.3));
         }
 
         .about-visuals {
             flex: 1;
-            min-width: 300px;
+            min-width: 350px;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
+            z-index: 1;
         }
 
         /* Hexagon Grid Styling */
@@ -297,18 +670,26 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(3, 1fr);
-            gap: 15px;
-            width: 350px;
-            height: 350px;
-            transform: rotate(30deg);
+            gap: 18px; /* More gap */
+            width: 400px; /* Larger grid */
+            height: 400px;
+            transform: rotate(20deg); /* Subtle rotation */
             position: relative;
             grid-template-areas:
                 ". hex1 hex2 ."
                 "hex3 discord hex4"
                 ". hex5 hex6 .";
+            transition: opacity 0.8s ease-out 0.6s, transform 0.8s ease-out 0.6s;
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
         }
 
-        /* Specific grid area assignments for icons - adjusted for combined HTML */
+        .about-card.is-visible .hex-grid {
+            opacity: 1;
+            transform: scale(1) rotate(20deg) translateY(0);
+        }
+
+
         .hex-grid > div:nth-child(1) { grid-area: hex1; } /* gamepad */
         .hex-grid > div:nth-child(2) { grid-area: hex2; } /* film */
         .hex-grid > div:nth-child(3) { grid-area: hex3; } /* music */
@@ -319,18 +700,19 @@
 
 
         .hex-item, .discord-center {
-            width: 100px;
-            height: 100px;
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
+            width: 110px; /* Larger hex items */
+            height: 110px;
+            background-color: rgba(255, 255, 255, 0.08); /* More prominent background */
+            border-radius: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
-            transform: rotate(-30deg);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            transform: rotate(-20deg); /* Counter-rotate */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
             position: relative;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
         }
 
         .hex-item::before, .discord-center::before {
@@ -342,87 +724,89 @@
             bottom: 0;
             background: linear-gradient(
                 45deg,
-                rgba(0, 123, 255, 0.3),
-                rgba(138, 43, 226, 0.3),
-                rgba(0, 240, 128, 0.3)
+                rgba(106, 17, 203, 0.4),
+                rgba(37, 117, 252, 0.4),
+                rgba(0, 240, 128, 0.4)
             );
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.4s ease;
         }
 
-        .hex-item:hover::before {
+        .hex-item:hover::before, .discord-center:hover::before {
             opacity: 1;
         }
 
+        .hex-item:hover, .discord-center:hover {
+            transform: rotate(-20deg) scale(1.08); /* Slightly lift and scale more */
+            box-shadow: 0 0 35px rgba(0, 0, 0, 0.5), 0 0 25px var(--gradient-end);
+        }
+
         .hex-item i, .discord-center i {
-            font-size: 2.8rem;
+            font-size: 3.2rem; /* Larger icons */
             z-index: 2;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, filter 0.3s ease;
         }
 
-        .hex-item:hover i {
-            transform: scale(1.1);
+        .hex-item:hover i, .discord-center:hover i {
+            transform: scale(1.15); /* Icon pops out */
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 15px rgba(0, 240, 128, 0.7));
         }
 
-        .icon-blue { color: var(--gradient-start); }
-        .icon-purple { color: var(--gradient-end); }
-        .icon-green { color: var(--accent-green); }
+        .icon-blue { color: var(--gradient-middle); }
+        .icon-purple { color: var(--gradient-start); }
+        .icon-green { color: var(--gradient-end); }
 
         .main-discord-icon {
-            font-size: 3.5rem;
+            font-size: 4rem; /* Even larger central discord icon */
             color: #7289DA;
-            filter: drop-shadow(0 0 10px rgba(114, 137, 218, 0.5));
+            filter: drop-shadow(0 0 15px rgba(114, 137, 218, 0.7));
         }
 
         .discord-center {
-            background-color: rgba(114, 137, 218, 0.1);
-            border: 1px solid rgba(114, 137, 218, 0.3);
+            background-color: rgba(114, 137, 218, 0.15); /* More prominent discord background */
+            border: 1px solid rgba(114, 137, 218, 0.4);
         }
 
         /* Members Section Specific Styles */
         #members-section {
             background-color: var(--dark-bg);
             text-align: center;
-            padding-top: 100px; /* Adjust for sticky navbar */
-        }
-
-        .members-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--text-light);
-            margin-bottom: 60px;
-            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end), var(--accent-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
         }
 
         .members-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
-            gap: 40px;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+            gap: 50px; /* More gap */
+            max-width: 1300px; /* Wider grid */
             width: 100%;
             margin-top: 30px;
         }
 
         .member-card {
             background-color: var(--dark-card);
-            border-radius: 15px;
-            padding: 30px;
+            border-radius: 20px; /* More rounded */
+            padding: 35px; /* More padding */
             text-align: center;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             display: flex;
             flex-direction: column;
             align-items: center;
-            border: 2px solid transparent; /* Base for border animation */
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            border: 2px solid transparent;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             overflow: hidden;
             position: relative;
+            z-index: 1; /* Ensure content is above gradient border */
+            opacity: 0; /* For scroll animation */
+            transform: translateY(20px); /* For scroll animation */
         }
 
-        /* Gradient borders for member cards */
+        .member-card.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+
+        /* Gradient borders for member cards - dynamic and more pronounced */
         .member-card::before {
             content: '';
             position: absolute;
@@ -430,8 +814,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            border-radius: 15px;
-            padding: 2px; /* This creates the gradient border effect */
+            border-radius: 20px;
+            padding: 3px; /* Thicker border */
             background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
             -webkit-mask:
                 linear-gradient(#fff 0 0) content-box,
@@ -447,7 +831,7 @@
             opacity: 1; /* Show gradient border on hover */
         }
 
-
+        /* Specific gradient overrides for individual cards */
         .member-card.member-gradient-blue::before { background: linear-gradient(to right, var(--card-gradient-blue-start), var(--card-gradient-blue-end)); }
         .member-card.member-gradient-orange::before { background: linear-gradient(to right, var(--card-gradient-orange-start), var(--card-gradient-orange-end)); }
         .member-card.member-gradient-green::before { background: linear-gradient(to right, var(--card-gradient-green-start), var(--card-gradient-green-end)); }
@@ -455,39 +839,42 @@
         .member-card.member-gradient-purple::before { background: linear-gradient(to right, var(--card-gradient-purple-start), var(--card-gradient-purple-end)); }
         .member-card.member-gradient-orange-alt::before { background: linear-gradient(to right, var(--card-gradient-orange-alt-start), var(--card-gradient-orange-alt-end)); }
 
-
         .member-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            transform: translateY(-8px) scale(1.02); /* More pronounced lift */
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0,240,128,0.4);
         }
 
         .member-icon {
-            width: 80px;
-            height: 80px;
+            width: 100px; /* Larger avatars */
+            height: 100px;
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.08);
+            background-color: rgba(255, 255, 255, 0.1); /* More transparent */
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px;
-            font-size: 2.5rem;
+            margin-bottom: 25px;
+            font-size: 3rem; /* Larger default icon if no image */
             color: var(--text-light);
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
             position: relative;
-            z-index: 1; /* Ensure icon is above pseudo-element border */
-            overflow: hidden; /* Important for image to be contained within circle */
+            z-index: 1;
+            overflow: hidden;
+            border: 2px solid transparent; /* Base for avatar border */
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+        .member-card:hover .member-icon {
+            transform: scale(1.05);
         }
 
         .member-icon img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Ensures the image covers the circular area */
+            object-fit: cover;
             border-radius: 50%;
-            display: block; /* Remove extra space below image */
+            display: block;
         }
 
-
-        /* Individual icon colors */
+        /* Individual icon colors for fallback if images fail */
         .member-gradient-blue .member-icon { color: var(--card-gradient-blue-end); }
         .member-gradient-orange .member-icon { color: var(--card-gradient-orange-end); }
         .member-gradient-green .member-icon { color: var(--card-gradient-green-end); }
@@ -495,18 +882,18 @@
         .member-gradient-purple .member-icon { color: var(--card-gradient-purple-end); }
         .member-gradient-orange-alt .member-icon { color: var(--card-gradient-orange-alt-end); }
 
-
         .member-name {
             font-family: 'Montserrat', sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.8rem; /* Larger name */
             font-weight: 700;
             color: var(--text-light);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
         }
 
         .member-bio {
-            font-size: 0.95rem;
-            color: var(--text-dark);
+            font-size: 1.05rem; /* Slightly larger bio */
+            color: var(--text-muted); /* Muted color for bio */
             margin-bottom: 0;
         }
 
@@ -514,57 +901,66 @@
         #contact-section {
             background-color: var(--dark-bg);
             text-align: center;
-            padding: 100px 5%;
-        }
-
-        .contact-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--text-light);
-            margin-bottom: 20px;
-            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end), var(--accent-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
         }
 
         .contact-subtitle {
-            font-size: 1.2rem;
+            font-size: 1.3rem; /* More prominent subtitle */
             color: var(--text-dark);
-            margin-bottom: 50px;
-            max-width: 700px;
+            margin-bottom: 60px; /* More space */
+            max-width: 800px;
+            font-weight: 300;
+            line-height: 1.8;
+            transition: opacity 0.8s ease-out 0.2s, transform 0.8s ease-out 0.2s;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        #contact-section.is-visible .contact-subtitle {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .contact-grid {
-            display: flex; /* Use flexbox for horizontal alignment */
-            justify-content: center; /* Center the card horizontally */
-            gap: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 50px; /* More gap */
             max-width: 1200px;
             width: 100%;
             margin-top: 50px;
-            flex-wrap: wrap; /* Allow cards to wrap on smaller screens */
+            flex-wrap: wrap;
+        }
+
+        .contact-card-link {
+            text-decoration: none; /* Ensure link doesn't underline card */
+            color: inherit;
         }
 
         .contact-card {
             background-color: var(--dark-card);
-            border-radius: 15px;
-            padding: 40px; /* Increased padding */
+            border-radius: 20px;
+            padding: 50px; /* Increased padding */
             text-align: center;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Center content vertically */
+            justify-content: center;
             align-items: center;
-            min-width: 300px; /* Minimum width for the card */
-            max-width: 400px; /* Maximum width for the card */
-            text-decoration: none; /* Remove underline from link */
-            color: inherit; /* Inherit text color */
+            min-width: 320px;
+            max-width: 450px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            z-index: 1;
+            opacity: 0;
+            transform: scale(0.9);
         }
 
+        .contact-card.is-visible {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        
         .contact-card::before {
             content: '';
             position: absolute;
@@ -572,8 +968,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            border-radius: 15px;
-            padding: 2px;
+            border-radius: 20px;
+            padding: 3px;
             background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
             -webkit-mask:
                 linear-gradient(#fff 0 0) content-box,
@@ -590,119 +986,278 @@
         }
 
         .contact-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-        }
-
-        .contact-card-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 2.2rem; /* Larger title for the card */
-            font-weight: 700;
-            color: var(--text-light);
-            margin-bottom: 30px; /* More space below title */
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6), 0 0 30px rgba(37, 117, 252, 0.4);
         }
 
         .contact-icon {
-            font-size: 3.5rem;
+            font-size: 4rem; /* Larger icon */
             color: #7289DA; /* Discord blue */
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 10px rgba(114, 137, 218, 0.5));
+            margin-bottom: 25px;
+            filter: drop-shadow(0 0 15px rgba(114, 137, 218, 0.7));
+            transition: transform 0.3s ease;
+        }
+
+        .contact-card:hover .contact-icon {
+            transform: scale(1.15) rotateY(15deg);
         }
 
         .contact-card h3 {
             font-family: 'Montserrat', sans-serif;
-            font-size: 1.8rem;
+            font-size: 2.2rem; /* Larger title for the card */
             font-weight: 700;
             color: var(--text-light);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
         }
 
         .contact-card p {
-            font-size: 1rem;
-            color: var(--text-dark);
+            font-size: 1.1rem;
+            color: var(--text-muted);
             margin-bottom: 0;
         }
-
 
         /* Fixed Discord Button */
         .btn-discord-fixed {
             position: fixed;
-            bottom: 33px; /* Slightly adjusted to align with image */
+            bottom: 30px;
             right: 30px;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 15px 30px;
-            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            gap: 12px;
+            padding: 18px 40px;
+            background: linear-gradient(45deg, var(--gradient-start) 0%, var(--gradient-middle) 100%);
             color: var(--text-light);
             text-decoration: none;
             border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-size: 1.2rem;
+            font-weight: 700;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
             border: none;
             cursor: pointer;
-            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             z-index: 999;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-discord-fixed::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-discord-fixed:hover::before {
+            left: 100%;
         }
 
         .btn-discord-fixed:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(0, 123, 255, 0.5);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 30px var(--gradient-middle);
+            background: linear-gradient(45deg, var(--gradient-middle) 0%, var(--gradient-end) 100%);
         }
 
         .btn-discord-fixed .fab {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
+        }
+
+        footer {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out 0.3s, transform 0.8s ease-out 0.3s;
+        }
+        footer.is-visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
 
         /* Responsive Design */
-        @media (max-width: 900px) {
+        @media (max-width: 992px) {
+            /* Keep nav-links and nav-utility visible on all devices now */
+            .nav-links, .nav-utility {
+                display: flex; /* Ensure they are always flex */
+                position: relative; /* Override absolute positioning for mobile flow */
+                left: initial;
+                transform: none;
+            }
             .navbar {
-                flex-direction: column;
-                align-items: flex-start;
-                padding-bottom: 10px;
+                padding: 15px 5%;
+                flex-wrap: wrap; /* Allow navbar items to wrap if needed */
+                justify-content: center; /* Center items when wrapped */
+                gap: 20px; /* Add some gap for wrapped items */
+            }
+            .nav-brand {
+                flex-basis: 100%; /* Make brand take full width on smaller screens, forcing other elements to wrap */
+                justify-content: center;
+                margin-bottom: 15px;
             }
             .nav-links {
+                flex-basis: 100%; /* Make links take full width and center */
+                justify-content: center;
                 gap: 20px;
-                margin-bottom: 15px;
-                flex-wrap: wrap;
+                order: 1; /* Place after brand */
             }
             .nav-utility {
-                width: 100%;
-                justify-content: flex-end;
+                flex-basis: 100%; /* Make utility take full width and center */
+                justify-content: center;
+                order: 2; /* Place after links */
             }
+
             .main-title {
-                font-size: 3rem;
+                font-size: 3.5rem;
             }
             .tagline {
-                font-size: 1rem;
+                font-size: 1.1rem;
+            }
+            .hero-logo {
+                width: 160px;
+            }
+            .btn-discord {
+                padding: 15px 35px;
+                font-size: 1.1rem;
             }
 
             .about-card {
                 flex-direction: column;
                 text-align: center;
-                padding: 40px;
-                gap: 40px;
+                padding: 50px;
+                gap: 50px;
             }
             .about-visuals {
-                order: -1;
+                order: -1; /* Move visuals above content */
             }
-            .about-title {
-                font-size: 2rem;
+             .about-title {
+                font-size: 2.5rem;
             }
             .about-text {
                 font-size: 1rem;
             }
             .hex-grid {
+                width: 350px;
+                height: 350px;
+                gap: 15px;
+            }
+            .hex-item, .discord-center {
+                width: 90px;
+                height: 90px;
+            }
+            .hex-item i, .discord-center i {
+                font-size: 2.5rem;
+            }
+            .main-discord-icon {
+                font-size: 3.2rem;
+            }
+
+            .section-title {
+                font-size: 3rem;
+            }
+            .members-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 40px;
+            }
+            .member-icon {
+                width: 90px;
+                height: 90px;
+            }
+            .member-name {
+                font-size: 1.6rem;
+            }
+
+            .section-title {
+                font-size: 3rem;
+            }
+            .contact-subtitle {
+                font-size: 1.1rem;
+            }
+            .contact-grid {
+                flex-direction: column;
+                gap: 40px;
+            }
+            .contact-card {
+                padding: 40px;
+                max-width: 90%;
+                margin: 0 auto;
+            }
+            .contact-card h3 {
+                font-size: 2rem;
+            }
+            .contact-icon {
+                font-size: 3.5rem;
+            }
+            .btn-discord-fixed {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 25px;
+                font-size: 1rem;
+                gap: 8px;
+            }
+             .btn-discord-fixed .fab {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column; /* Stack navbar items vertically on very small screens */
+            }
+            .nav-brand, .nav-links, .nav-utility {
+                margin-bottom: 10px; /* Add spacing between stacked items */
+            }
+            .nav-links {
+                flex-wrap: wrap; /* Allow individual nav items to wrap */
+                gap: 15px;
+            }
+            .nav-item {
+                font-size: 0.9rem; /* Smaller font for more items to fit */
+                padding-bottom: 5px;
+            }
+            
+            section {
+                padding: 100px 0;
+            }
+            .main-title {
+                font-size: 2.8rem;
+                letter-spacing: 2px;
+            }
+            .tagline {
+                font-size: 1rem;
+                margin-bottom: 40px;
+            }
+            .hero-logo {
+                width: 130px;
+            }
+            .btn-discord {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+            .btn-discord .fab {
+                font-size: 1.3rem;
+            }
+
+            .about-card {
+                padding: 40px;
+                gap: 40px;
+            }
+             .about-title {
+                font-size: 2.2rem;
+            }
+            .about-text {
+                font-size: 0.95rem;
+            }
+            .hex-grid {
                 width: 300px;
                 height: 300px;
-                gap: 10px;
+                gap: 12px;
             }
             .hex-item, .discord-center {
                 width: 80px;
                 height: 80px;
-                border-radius: 8px;
             }
             .hex-item i, .discord-center i {
                 font-size: 2.2rem;
@@ -711,62 +1266,56 @@
                 font-size: 2.8rem;
             }
 
-            .members-title {
+            .section-title {
                 font-size: 2.5rem;
+                margin-bottom: 50px;
             }
             .members-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                grid-template-columns: 1fr; /* Single column on smaller mobiles */
                 gap: 30px;
-            }
-            .member-card {
-                padding: 25px;
             }
             .member-icon {
-                width: 70px;
-                height: 70px;
-            }
-            .member-icon img {
-                width: 100%;
-                height: 100%;
+                width: 80px;
+                height: 80px;
             }
             .member-name {
-                font-size: 1.3rem;
+                font-size: 1.4rem;
+            }
+            .member-bio {
+                font-size: 0.9rem;
             }
 
-            .contact-title {
+            .section-title {
                 font-size: 2.5rem;
+                margin-bottom: 20px;
             }
             .contact-subtitle {
-                font-size: 1rem;
-            }
-            .contact-grid {
-                grid-template-columns: 1fr; /* Stack on smaller screens */
-                gap: 30px;
+                font-size: 1.1rem;
+                margin-bottom: 50px;
             }
             .contact-card {
-                padding: 30px; /* Slightly reduced padding */
-                min-width: unset; /* Allow it to shrink */
+                padding: 35px;
+                min-width: unset;
             }
-            .contact-card-title {
+            .contact-card h3 {
                 font-size: 1.8rem;
             }
-            .contact-button-group {
-                gap: 15px;
+            .contact-icon {
+                font-size: 3rem;
             }
-            .contact-button {
+            .btn-discord-fixed {
+                bottom: 20px;
+                right: 20px;
                 padding: 12px 25px;
                 font-size: 1rem;
+                gap: 8px;
+            }
+             .btn-discord-fixed .fab {
+                font-size: 1.2rem;
             }
         }
 
-        @media (max-width: 600px) {
-            .navbar {
-                padding: 10px 5%;
-            }
-            .nav-links {
-                gap: 15px;
-                font-size: 0.85rem;
-            }
+        @media (max-width: 480px) {
             .main-title {
                 font-size: 2.2rem;
             }
@@ -774,123 +1323,52 @@
                 font-size: 0.9rem;
             }
             .hero-logo {
-                width: 150px;
-            }
-            .btn-discord {
-                padding: 12px 25px;
-                font-size: 1rem;
-            }
-            .btn-discord .fab {
-                font-size: 1.1rem;
+                width: 100px;
             }
 
-            .about-card {
-                padding: 30px;
-            }
-            .about-title {
-                font-size: 1.8rem;
+            .about-title, .section-title {
+                font-size: 2rem;
+                letter-spacing: 1px;
             }
             .about-text {
-                font-size: 0.9rem;
+                font-size: 0.85rem;
             }
             .hex-grid {
                 width: 250px;
                 height: 250px;
+                gap: 10px;
             }
             .hex-item, .discord-center {
                 width: 70px;
                 height: 70px;
             }
             .hex-item i, .discord-center i {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             .main-discord-icon {
-                font-size: 2.5rem;
-            }
-
-            .members-title {
-                font-size: 2rem;
-                margin-bottom: 40px;
-            }
-            .members-grid {
-                grid-template-columns: 1fr; /* Single column on very small screens */
-                gap: 25px;
-            }
-            .member-card {
-                padding: 20px;
-            }
-            .member-icon {
-                width: 60px;
-                height: 60px;
-            }
-            .member-icon img {
-                width: 100%;
-                height: 100%;
+                font-size: 2.2rem;
             }
             .member-name {
                 font-size: 1.2rem;
             }
-
-            .contact-title {
-                font-size: 2rem;
-                margin-bottom: 30px;
-            }
-            .contact-subtitle {
-                font-size: 0.9rem;
-                margin-bottom: 40px;
-            }
-            .contact-grid {
-                grid-template-columns: 1fr;
-                gap: 25px;
-            }
-            .contact-card {
-                padding: 20px;
-            }
-            .contact-card-title {
+            .contact-card h3 {
                 font-size: 1.6rem;
-                margin-bottom: 25px;
             }
-            .contact-button {
-                font-size: 0.9rem;
-                padding: 10px 20px;
-            }
-            .btn-discord-fixed {
-                bottom: 20px;
-                right: 20px;
-                padding: 12px 25px;
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .nav-links {
-                flex-direction: column;
-                align-items: flex-start;
+            .contact-icon {
+                font-size: 2.5rem;
             }
             .nav-item {
-                padding-bottom: 2px;
-            }
-            .main-title {
-                font-size: 1.8rem;
-            }
-            .tagline {
-                font-size: 0.8rem;
-            }
-            .members-title, .contact-title {
-                font-size: 1.6rem;
-            }
-            .contact-button-group {
-                flex-direction: column;
-                gap: 10px;
+                font-size: 0.8rem; /* Even smaller for very small screens */
             }
         }
     </style>
 </head>
 <body>
+    <div class="cursor-dot"></div>
     <header class="navbar">
-        <div class="nav-brand">
+        <a href="#hero-section" class="nav-brand">
             <img src="1i.png" alt="Unbreakable Logo" class="navbar-logo">
-        </div>
+        </a>
         <nav class="nav-links">
             <a href="#hero-section" class="nav-item active">HOME</a>
             <a href="#about-section" class="nav-item">ABOUT US</a>
@@ -899,18 +1377,14 @@
             <a href="#contact-section" class="nav-item">CONTACT</a>
         </nav>
        
-            <div class="nav-utility">
-    <a href="https://discord.gg/QYbuteX2t8" target="_blank" class="discord-link">
-        <div class="discord-icon-container">
-            <i class="fab fa-discord"></i>
-        </div>
-    </a>
-</div>
+        <!-- Placeholder to occupy space on the right (and balance the logo on the left) -->
+        <div class="nav-utility" style="min-width: 100px;"></div> 
     </header>
 
     <!-- HERO SECTION -->
-    <section id="hero-section" class="hero-section">
-        <div class="hero-content">
+    <section id="hero-section">
+        <div class="container hero-content">
+            <div class="main-title-glow"></div> <!-- Glow effect -->
             <div class="logo-container">
                 <img src="1i.png" alt="Unbreakable Friends Logo" class="hero-logo">
             </div>
@@ -923,12 +1397,12 @@
     </section>
 
     <!-- ABOUT US SECTION -->
-    <section id="about-section" class="about-section">
-        <div class="about-card">
+    <section id="about-section">
+        <div class="container about-card">
             <div class="about-content">
                 <h2 class="about-title">THE STORY OF <br>UNBREAKABLE FRIENDS</h2>
                 <p class="about-text">
-                    Born from countless late-night sessions and endless movie marathons, we're creating our own haven. We're a crew bound by shared passions, inside jokes, and belief that distance won't dim our bond. Whether we're conquering worlds or just having a laugh, our friendship is well... **Unbreakable**.
+                    Born from countless late-night sessions and endless movie marathons, we're creating our own haven. We're a crew bound by shared passions, inside jokes, and belief that distance won't dim our bond. Whether we're conquering worlds or just having a laugh, our friendship is well... <strong>Unbreakable</strong>.
                 </p>
                 <div class="about-icon-signature">
                     <img src="1i.png" alt="Unbreakable Icon" class="signature-icon">
@@ -962,98 +1436,119 @@
         </div>
     </section>
 
-    <section id="members-section" class="members-section">
-    <h2 class="members-title">MEET THE UNBREAKABLE CREW</h2>
-    
-    <div class="members-grid">
-        
-        <div class="member-card member-gradient-orange-alt">
-            <div class="member-icon">
-                <img src="rapter.png" alt="Rapter's Avatar">
-            </div>
-            <h3 class="member-name">Rapter</h3>
-            <p class="member-bio">rollex_92</p>
+    <!-- MEMBERS SECTION -->
+    <section id="members-section">
+        <div class="container">
+            <h2 class="section-title members-title">MEET THE UNBREAKABLE CREW</h2>
+            
+            <div class="members-grid">
+                
+                <div class="member-card member-gradient-orange-alt">
+                    <div class="member-icon">
+                        <img src="rapter.png" alt="Rapter's Avatar">
+                    </div>
+                    <h3 class="member-name">Rapter</h3>
+                    <p class="member-bio">rollex_92</p>
+                </div>
+                
+                <div class="member-card member-gradient-orange-alt">
+                    <div class="member-icon">
+                        <img src="damsas.png" alt="Damsass's Avatar">
+                    </div>
+                    <h3 class="member-name">_ⓓคᗰ𝐒คＳ𝕤.....</h3>
+                    <p class="member-bio">thivaindamsass27707</p>
+                </div>
+                
+                <div class="member-card member-gradient-orange-alt">
+                    <div class="member-icon">
+                        <img src="𝕍𝕠𝕚𝕕 ᶜᵃˡˡᵉʳ 。♱.png" alt="Void Caller's Avatar">
+                    </div>
+                    <h3 class="member-name">𝕍𝕠𝕚𝕚𝕕 ᶜᵃˡˡᵉʳ 。♱</h3>
+                    <p class="member-bio">devil_06_is_me</p>
+                </div>
+                
+                <div class="member-card member-gradient-orange-alt">
+                    <div class="member-icon">
+                        <img src="̷x̷̷K̷̷A̷̷I̷̷Z̷̷E̷̷N̷.png" alt="Kaizen's Avatar">
+                    </div>
+                    <h3 class="member-name">x̷̷K̷̷A̷̷I̷̷Z̷̷E̷̷N̷</h3>
+                    <p class="member-bio">blue_devil_404</p>
+                </div>
+                
+                <div class="member-card member-gradient-orange-alt">
+                    <div class="member-icon">
+                        <img src="slamm3r12355.png" alt="Slammer12355's Avatar">
+                    </div>
+                    <h3 class="member-name">✧S|4mm3r12355✧</h3>
+                    <p class="member-bio">slammer12355</p>
+                </div>
+                
+                <div class="member-card member-gradient-orange-alt">
+                    <div class="member-icon">
+                        <img src="try harder.png" alt="TryHard's Avatar">
+                    </div>
+                    <h3 class="member-name">TryHard</h3>
+                    <p class="member-bio">rip_disas</p>
+                </div>
+                
+            </div> 
         </div>
-        
-        <div class="member-card member-gradient-orange-alt">
-            <div class="member-icon">
-                <img src="_ⓓคᗰ𝐒คＳ𝕤.....png" alt="Damsass's Avatar">
-            </div>
-            <h3 class="member-name">_ⓓคᗰ𝐒คＳ𝕤.....</h3>
-            <p class="member-bio">thivaindamsass27707</p>
-        </div>
-        
-        <div class="member-card member-gradient-orange-alt">
-            <div class="member-icon">
-                <img src="𝕍𝕠𝕚𝕕 ᶜᵃˡˡᵉʳ 。♱.png" alt="Void Caller's Avatar">
-            </div>
-            <h3 class="member-name">𝕍𝕠𝕚𝕕 ᶜᵃˡˡᵉʳ 。♱</h3>
-            <p class="member-bio">devil_06_is_me</p>
-        </div>
-        
-        <div class="member-card member-gradient-orange-alt">
-            <div class="member-icon">
-                <img src="̷x̷̷K̷̷A̷̷I̷̷Z̷̷E̷̷N̷.png" alt="Kaizen's Avatar">
-            </div>
-            <h3 class="member-name">x̷̷K̷̷A̷̷I̷̷Z̷̷E̷̷N̷</h3>
-            <p class="member-bio">blue_devil_404</p>
-        </div>
-        
-        <div class="member-card member-gradient-orange-alt">
-            <div class="member-icon">
-                <img src="slamm3r12355.png" alt="Slammer12355's Avatar">
-            </div>
-            <h3 class="member-name">✧S|4mm3r12355✧</h3>
-            <p class="member-bio">slammer12355</p>
-        </div>
-        
-        <div class="member-card member-gradient-orange-alt">
-            <div class="member-icon">
-                <img src="try harder.png" alt="TryHard's Avatar">
-            </div>
-            <h3 class="member-name">TryHard</h3>
-            <p class="member-bio">rip_disas</p>
-        </div>
-        
-    </div> 
-</section>
+    </section>
 
-<!-- CONTACT SECTION -->
-<section id="contact-section">
-    <h2 class="contact-title">REACH OUT, LET'S CONNECT!</h2>
-    <p class="contact-subtitle">
-        Got questions, suggestions, or just want to say hi? Join our community and contact the Admins directly!
-    </p>
-    
-    <div class="contact-grid">
-        
-        <a href="https://discord.com/users/1199368140648366162" target="_blank" class="contact-card-link">
-            <div class="contact-card">
-                <i class="fab fa-discord contact-icon"></i>
-                <h3>Contact Admins</h3>
-                <p>Direct message an Admin on Discord.</p>
+    <!-- CONTACT SECTION -->
+    <section id="contact-section">
+        <div class="container">
+            <h2 class="section-title contact-title">REACH OUT, LET'S CONNECT!</h2>
+            <p class="contact-subtitle" style="margin: 0 auto 60px; text-align: center; max-width: 800px;"></p>
+                Got questions, suggestions, or just want to say hi? Join our community and contact the Admins directly!
+            </p>
+            
+            <div class="contact-grid">
+                <a href="https://discord.com/users/1199368140648366162" target="_blank" class="contact-card-link">
+                    <div class="contact-card">
+                        <i class="fab fa-discord contact-icon"></i>
+                        <h3>Contact Admins</h3>
+                        <p>Direct message an Admin on Discord.</p>
+                    </div>
+                </a>
             </div>
-        </a>
-        
-    </div>
-</section>
+        </div>
+    </section>
+
+    <!-- Fixed Discord Button -->
+    <a href="https://discord.gg/QYbuteX2t8" class="btn-discord-fixed" target="_blank">
+        <i class="fab fa-discord"></i> JOIN US
+    </a>
+
+    <footer style="background-color:var(--dark-bg); padding:40px 0;">
+        <div class="container" style="text-align:center;">
+            <p style="color:var(--text-muted); margin:0;">
+                © 2025 Hyper Pro. All Rights Reserved. By<a href="https://discord.com/users/1199368140648366162" target="_blank" rel="noopener noreferrer" style="color:var(--gradient-middle); text-decoration:none; margin-left:8px;">Sithula Vikasitha</a>
+            </p>
+        </div>
+    </footer>
     <script>
         // Get references to elements
         const navbar = document.querySelector('.navbar');
         const sections = document.querySelectorAll('section');
         const navItems = document.querySelectorAll('.nav-item');
+        const cursorDot = document.querySelector('.cursor-dot');
 
         // Function to update active navigation item
         function updateActiveNavItem() {
             let currentActiveSectionId = '';
-            const scrollPosition = window.pageYOffset + navbar.clientHeight + 10; // Add some offset
+            // Adjust scroll position to account for the fixed navbar height
+            const offset = navbar.offsetHeight + 10; 
+            const scrollPosition = window.scrollY + offset; 
 
             sections.forEach(section => {
+                // Check if the scroll position is within the bounds of the current section
                 if (scrollPosition >= section.offsetTop && scrollPosition < section.offsetTop + section.offsetHeight) {
                     currentActiveSectionId = section.getAttribute('id');
                 }
             });
 
+            // Update desktop nav items
             navItems.forEach(item => {
                 item.classList.remove('active');
                 if (item.getAttribute('href') === `#${currentActiveSectionId}`) {
@@ -1062,9 +1557,9 @@
             });
 
             // Handle the case where at the very top (hero section)
-            if (window.pageYOffset === 0 && document.querySelector('.nav-item[href="#hero-section"]')) {
+            if (window.scrollY === 0) {
                 navItems.forEach(item => item.classList.remove('active'));
-                document.querySelector('.nav-item[href="#hero-section"]').classList.add('active');
+                document.querySelector('.nav-links .nav-item[href="#hero-section"]').classList.add('active');
             }
         }
 
@@ -1075,26 +1570,115 @@
 
                 const targetId = this.getAttribute('href');
                 const targetElement = document.querySelector(targetId);
-                const offset = navbar.clientHeight; // Adjust for sticky navbar
+                const offset = navbar.offsetHeight; // Get current navbar height
 
                 window.scrollTo({
                     top: targetElement.offsetTop - offset,
                     behavior: 'smooth'
                 });
-
-                // Manually update active class immediately on click
-                navItems.forEach(item => item.classList.remove('active'));
-                this.classList.add('active');
             });
         });
 
-        // Update active nav item on scroll
-        window.addEventListener('scroll', updateActiveNavItem);
+        // Navbar background change on scroll
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            updateActiveNavItem();
+        });
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            root: null, // viewport
+            rootMargin: '0px',
+            threshold: 0.1 // 10% of the item is visible
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    // Special handling for titles and cards within sections
+                     if (entry.target.id === 'about-section') {
+                        // Add the visible class to the .about-card so CSS selectors
+                        // like .about-card.is-visible .about-title and .about-card.is-visible .about-text apply correctly.
+                        const aboutCard = entry.target.querySelector('.about-card');
+                        if (aboutCard) {
+                            aboutCard.classList.add('is-visible');
+                        }
+
+                    } else if (entry.target.id === 'members-section' ) {
+                        entry.target.querySelector('.members-title').classList.add('is-visible');
+                        const memberCards = entry.target.querySelectorAll('.member-card');
+                        memberCards.forEach((card, index) => {
+                            card.style.transitionDelay = `${index * 0.15 + 0.3}s`; // Staggered delay
+                            card.classList.add('is-visible');
+                        });
+                    } else if (entry.target.id === 'contact-section') {
+                        entry.target.querySelector('.contact-title').classList.add('is-visible');
+                        entry.target.querySelector('.contact-subtitle').classList.add('is-visible');
+                        const contactCard = entry.target.querySelector('.contact-card');
+                        if (contactCard) {
+                             contactCard.style.transitionDelay = '0.5s'; 
+                             contactCard.classList.add('is-visible');
+                        }
+                    } else if (entry.target.id === 'hero-section') {
+                         entry.target.querySelector('.main-title-glow').classList.add('is-visible');
+                         entry.target.querySelector('.hero-logo').style.animation = 'rotateIn 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards';
+                         entry.target.querySelector('.hero-logo').style.animationDelay = '0.5s';
+                    } else if (entry.target.tagName === 'FOOTER') {
+                        entry.target.classList.add('is-visible');
+                    }
+                    observer.unobserve(entry.target); // Stop observing once visible
+                }
+            });
+        }, observerOptions);
+
+        // Titles get their own observer for a different animation
+        const titleObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 }); // Title needs to be 50% visible
+
+        // Observe sections and titles
+        sections.forEach(section => observer.observe(section));
+        document.querySelectorAll('.section-title').forEach(title => titleObserver.observe(title));
+        observer.observe(document.querySelector('footer'));
+
 
         // Initial active state for the home link on page load
         document.addEventListener('DOMContentLoaded', () => {
             updateActiveNavItem(); // Check current position on load
+             // Manually trigger hero section visibility on load
+             document.getElementById('hero-section').classList.add('is-visible');
+             document.getElementById('hero-section').querySelector('.main-title-glow').classList.add('is-visible');
+             document.getElementById('hero-section').querySelector('.hero-logo').style.animation = 'rotateIn 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards';
+             document.getElementById('hero-section').querySelector('.hero-logo').style.animationDelay = '0.5s';
         });
+
+        // Cursor Trail Effect
+        document.addEventListener('mousemove', (e) => {
+            cursorDot.style.left = `${e.clientX}px`;
+            cursorDot.style.top = `${e.clientY}px`;
+            cursorDot.style.opacity = 1; // Always visible when moving
+        });
+
+        document.addEventListener('mouseleave', () => {
+            cursorDot.style.opacity = 0; // Hide when mouse leaves document
+        });
+
+        // Make elements with specific classes interact with the custom cursor
+        document.querySelectorAll('a, button, .discord-icon-container, .search-icon-container, .hex-item, .discord-center, .member-card, .contact-card').forEach(el => {
+            el.addEventListener('mouseenter', () => cursorDot.classList.add('active'));
+            el.addEventListener('mouseleave', () => cursorDot.classList.remove('active'));
+        });
+
     </script>
 </body>
 </html>
