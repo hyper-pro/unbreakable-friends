@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+<div class="menu-toggle" id="mobile-menu">
+    <i class="fas fa-bars"></i>
+</div>
 <html lang="en">
 <head>
     <meta name="google-site-verification" content="-edPGjeJeeIRb5AAnsek0yMbDxm_FLdyxPuZEi8k7vU" />
@@ -279,6 +281,15 @@
             border-color: var(--gradient-end);
             color: var(--gradient-end);
             box-shadow: 0 0 10px rgba(0,240,128,0.3);
+        }
+
+        /* Mobile Menu Button */
+        .menu-toggle {
+            display: none; /* Hidden by default on desktop */
+            font-size: 1.8rem;
+            color: var(--text-light);
+            cursor: pointer;
+            z-index: 1001; /* Above other navbar elements */
         }
 
         /* Hero Section Specific Styles */
@@ -1078,45 +1089,23 @@
 
 
         /* Responsive Design */
+        /* PC/Desktop Styles (default, > 992px) */
+
         @media (max-width: 992px) {
-            /* Keep nav-links and nav-utility visible on all devices now */
-            .nav-links, .nav-utility {
-                display: flex; /* Ensure they are always flex */
-                position: relative; /* Override absolute positioning for mobile flow */
-                left: initial;
-                transform: none;
-            }
             .navbar {
                 padding: 15px 5%;
-                flex-wrap: wrap; /* Allow navbar items to wrap if needed */
-                justify-content: center; /* Center items when wrapped */
-                gap: 20px; /* Add some gap for wrapped items */
-            }
-            .nav-brand {
-                flex-basis: 100%; /* Make brand take full width on smaller screens, forcing other elements to wrap */
-                justify-content: center;
-                margin-bottom: 15px;
             }
             .nav-links {
-                flex-basis: 100%; /* Make links take full width and center */
-                justify-content: center;
-                gap: 20px;
-                order: 1; /* Place after brand */
+                gap: 25px;
             }
-            .nav-utility {
-                flex-basis: 100%; /* Make utility take full width and center */
-                justify-content: center;
-                order: 2; /* Place after links */
-            }
-
             .main-title {
                 font-size: 3.5rem;
             }
             .tagline {
-                font-size: 1.1rem;
+                font-size: 1.2rem;
             }
             .hero-logo {
-                width: 160px;
+                width: 180px;
             }
             .btn-discord {
                 padding: 15px 35px;
@@ -1124,34 +1113,29 @@
             }
 
             .about-card {
-                flex-direction: column;
-                text-align: center;
                 padding: 50px;
                 gap: 50px;
             }
-            .about-visuals {
-                order: -1; /* Move visuals above content */
-            }
-             .about-title {
-                font-size: 2.5rem;
+            .about-title {
+                font-size: 2.8rem;
             }
             .about-text {
                 font-size: 1rem;
             }
             .hex-grid {
-                width: 350px;
-                height: 350px;
-                gap: 15px;
+                width: 380px;
+                height: 380px;
+                gap: 16px;
             }
             .hex-item, .discord-center {
-                width: 90px;
-                height: 90px;
+                width: 100px;
+                height: 100px;
             }
             .hex-item i, .discord-center i {
-                font-size: 2.5rem;
+                font-size: 2.8rem;
             }
             .main-discord-icon {
-                font-size: 3.2rem;
+                font-size: 3.5rem;
             }
 
             .section-title {
@@ -1169,20 +1153,14 @@
                 font-size: 1.6rem;
             }
 
-            .section-title {
-                font-size: 3rem;
-            }
             .contact-subtitle {
-                font-size: 1.1rem;
+                font-size: 1.2rem;
             }
             .contact-grid {
-                flex-direction: column;
                 gap: 40px;
             }
             .contact-card {
                 padding: 40px;
-                max-width: 90%;
-                margin: 0 auto;
             }
             .contact-card h3 {
                 font-size: 2rem;
@@ -1191,35 +1169,59 @@
                 font-size: 3.5rem;
             }
             .btn-discord-fixed {
-                bottom: 20px;
-                right: 20px;
-                padding: 12px 25px;
-                font-size: 1rem;
-                gap: 8px;
+                padding: 15px 35px;
+                font-size: 1.1rem;
             }
-             .btn-discord-fixed .fab {
-                font-size: 1.2rem;
+            .btn-discord-fixed .fab {
+                font-size: 1.3rem;
             }
         }
 
         @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column; /* Stack navbar items vertically on very small screens */
-            }
-            .nav-brand, .nav-links, .nav-utility {
-                margin-bottom: 10px; /* Add spacing between stacked items */
-            }
+            /* Mobile Navbar Toggle */
             .nav-links {
-                flex-wrap: wrap; /* Allow individual nav items to wrap */
-                gap: 15px;
+                position: fixed;
+                top: 0;
+                left: -100%; /* Hidden off-screen */
+                width: 70%;
+                height: 100vh;
+                background-color: rgba(15, 15, 15, 0.95);
+                backdrop-filter: blur(15px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 30px;
+                transition: left 0.4s ease-in-out;
+                z-index: 999;
+                box-shadow: 5px 0 20px rgba(0,0,0,0.5);
+                transform: translateX(0); /* Remove initial transform */
             }
-            .nav-item {
-                font-size: 0.9rem; /* Smaller font for more items to fit */
-                padding-bottom: 5px;
+
+            .nav-links.active {
+                left: 0; /* Slide in */
             }
-            
+
+            .menu-toggle {
+                display: block; /* Show menu button */
+            }
+
+            .nav-brand {
+                position: relative;
+                z-index: 1002;
+            }
+            .nav-utility {
+                display: none; /* Hide utility icons on mobile for simplicity */
+            }
+
+            .navbar {
+                padding: 15px 5%;
+                justify-content: space-between; /* Space between brand and toggle */
+            }
+
+
             section {
                 padding: 100px 0;
+                min-height: auto; /* Allow sections to shrink on mobile */
             }
             .main-title {
                 font-size: 2.8rem;
@@ -1241,11 +1243,16 @@
             }
 
             .about-card {
+                flex-direction: column;
+                text-align: center;
                 padding: 40px;
                 gap: 40px;
             }
-             .about-title {
-                font-size: 2.2rem;
+            .about-visuals {
+                order: -1; /* Move visuals above content */
+            }
+            .about-title {
+                font-size: 2.5rem;
             }
             .about-text {
                 font-size: 0.95rem;
@@ -1271,7 +1278,7 @@
                 margin-bottom: 50px;
             }
             .members-grid {
-                grid-template-columns: 1fr; /* Single column on smaller mobiles */
+                grid-template-columns: 1fr; /* Single column on mobiles */
                 gap: 30px;
             }
             .member-icon {
@@ -1285,17 +1292,19 @@
                 font-size: 0.9rem;
             }
 
-            .section-title {
-                font-size: 2.5rem;
-                margin-bottom: 20px;
-            }
             .contact-subtitle {
                 font-size: 1.1rem;
                 margin-bottom: 50px;
             }
+            .contact-grid {
+                flex-direction: column;
+                gap: 40px;
+            }
             .contact-card {
                 padding: 35px;
                 min-width: unset;
+                max-width: 90%;
+                margin: 0 auto;
             }
             .contact-card h3 {
                 font-size: 1.8rem;
@@ -1310,7 +1319,7 @@
                 font-size: 1rem;
                 gap: 8px;
             }
-             .btn-discord-fixed .fab {
+            .btn-discord-fixed .fab {
                 font-size: 1.2rem;
             }
         }
@@ -1358,7 +1367,11 @@
                 font-size: 2.5rem;
             }
             .nav-item {
-                font-size: 0.8rem; /* Even smaller for very small screens */
+                font-size: 1.1rem; /* Slightly larger in mobile menu */
+            }
+            .nav-item.active::after, .nav-item:hover::after {
+                width: 50%; /* Shorter underline in mobile menu */
+                left: 25%;
             }
         }
     </style>
@@ -1369,6 +1382,9 @@
         <a href="#hero-section" class="nav-brand">
             <img src="1i.png" alt="Unbreakable Logo" class="navbar-logo">
         </a>
+        <div class="menu-toggle" id="mobile-menu">
+            <i class="fas fa-bars"></i>
+        </div>
         <nav class="nav-links">
             <a href="#hero-section" class="nav-item active">HOME</a>
             <a href="#about-section" class="nav-item">ABOUT US</a>
@@ -1378,7 +1394,14 @@
         </nav>
        
         <!-- Placeholder to occupy space on the right (and balance the logo on the left) -->
-        <div class="nav-utility" style="min-width: 100px;"></div> 
+        <div class="nav-utility">
+            <div class="search-icon-container">
+                <i class="fas fa-search"></i>
+            </div>
+            <a href="https://discord.gg/QYbuteX2t8" target="_blank" class="discord-icon-container">
+                <i class="fab fa-discord"></i>
+            </a>
+        </div> 
     </header>
 
     <!-- HERO SECTION -->
@@ -1434,7 +1457,7 @@
                     <div class="hex-item">
                         <i class="fas fa-shield-alt icon-purple"></i>
                     </div>
-                    <div class="hex-item"></div>
+                    <div class="hex-item">
                         <i class="fas fa-sword icon-green"></i>
                     </div>
                 </div>
@@ -1505,7 +1528,7 @@
     <section id="contact-section">
         <div class="container">
             <h2 class="section-title contact-title">REACH OUT, LET'S CONNECT!</h2>
-            <p class="contact-subtitle" style="margin: 0 auto 60px; text-align: center; max-width: 800px;"></p>
+            <p class="contact-subtitle" style="margin: 0 auto 60px; text-align: center; max-width: 800px;">
                 Got questions, suggestions, or just want to say hi? Join our community and contact the Admins directly!
             </p>
             
@@ -1539,6 +1562,8 @@
         const sections = document.querySelectorAll('section');
         const navItems = document.querySelectorAll('.nav-item');
         const cursorDot = document.querySelector('.cursor-dot');
+        const mobileMenuToggle = document.getElementById('mobile-menu');
+        const navLinks = document.querySelector('.nav-links');
 
         // Function to update active navigation item
         function updateActiveNavItem() {
@@ -1574,6 +1599,11 @@
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
 
+                // Close mobile menu if open
+                if (navLinks.classList.contains('active')) {
+                    navLinks.classList.remove('active');
+                }
+
                 const targetId = this.getAttribute('href');
                 const targetElement = document.querySelector(targetId);
                 const offset = navbar.offsetHeight; // Get current navbar height
@@ -1593,6 +1623,11 @@
                 navbar.classList.remove('scrolled');
             }
             updateActiveNavItem();
+        });
+
+        // Mobile menu toggle functionality
+        mobileMenuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
         });
 
         // Intersection Observer for scroll animations
@@ -1668,23 +1703,27 @@
              document.getElementById('hero-section').querySelector('.hero-logo').style.animationDelay = '0.5s';
         });
 
-        // Cursor Trail Effect
-        document.addEventListener('mousemove', (e) => {
-            cursorDot.style.left = `${e.clientX}px`;
-            cursorDot.style.top = `${e.clientY}px`;
-            cursorDot.style.opacity = 1; // Always visible when moving
-        });
+        // Cursor Trail Effect - Only for desktop
+        if (window.innerWidth > 768) {
+            document.addEventListener('mousemove', (e) => {
+                cursorDot.style.left = `${e.clientX}px`;
+                cursorDot.style.top = `${e.clientY}px`;
+                cursorDot.style.opacity = 1; // Always visible when moving
+            });
 
-        document.addEventListener('mouseleave', () => {
-            cursorDot.style.opacity = 0; // Hide when mouse leaves document
-        });
+            document.addEventListener('mouseleave', () => {
+                cursorDot.style.opacity = 0; // Hide when mouse leaves document
+            });
 
-        // Make elements with specific classes interact with the custom cursor
-        document.querySelectorAll('a, button, .discord-icon-container, .search-icon-container, .hex-item, .discord-center, .member-card, .contact-card').forEach(el => {
-            el.addEventListener('mouseenter', () => cursorDot.classList.add('active'));
-            el.addEventListener('mouseleave', () => cursorDot.classList.remove('active'));
-        });
-
+            // Make elements with specific classes interact with the custom cursor
+            document.querySelectorAll('a, button, .discord-icon-container, .search-icon-container, .hex-item, .discord-center, .member-card, .contact-card').forEach(el => {
+                el.addEventListener('mouseenter', () => cursorDot.classList.add('active'));
+                el.addEventListener('mouseleave', () => cursorDot.classList.remove('active'));
+            });
+        } else {
+            // Hide custom cursor on mobile
+            cursorDot.style.display = 'none';
+        }
     </script>
 </body>
 </html>
